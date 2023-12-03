@@ -70,21 +70,26 @@
 
 <body>
     <!-- HTML -->
+    <!-- контейнер .container, содержит слайдер и другие элементы -->
     <div class="container">
+        <!-- .slider-container содержит сам слайдер, точки навигации и кнопки управления -->
         <div class="slider-container">
             <!-- СЛАЙДЫ -->
+            <!-- .slider содержит отдельные слайды (.slider-item) -->
             <div class="slider">
                 <div class="slider-item">Слайд 1</div>
                 <div class="slider-item">Слайд 2</div>
                 <div class="slider-item">Слайд 3</div>
             </div>
             <!-- ДОТЫ -->
+            <!-- .dots-container содержит точки навигации (.dot) для каждого слайда -->
             <div class="dots-container">
                 <span class="dot"></span>
                 <span class="dot"></span>
                 <span class="dot"></span>
             </div>
             <!-- КНОПКИ ПЕРЕКЛЮЧЕНИЯ -->
+            <!-- кнопки "Предыдущий" и "Следующий" имеют идентификаторы prevBtn и nextBtn -->
             <button id="prevBtn">Предыдущий</button>
             <button id="nextBtn">Следующий</button>
         </div>
@@ -93,61 +98,99 @@
 
     <!-- SCRIPTS -->
     <script>
+        // выбор различных элементов DOM на странице по CSS-селекторам
         const slider = document.querySelector('.slider');
         const prevBtn = document.querySelector('#prevBtn');
         const nextBtn = document.querySelector('#nextBtn');
         const dotsContainer = document.querySelector('.dots-container');
         const dots = document.querySelectorAll('.dot');
 
+        // slideIndex хранит текущий индекс слайда
         let slideIndex = 0;
-
+        
+        // showSlide(index) отображает слайд по указанному индексу.
         function showSlide(index) {
+            // эта строка выбирает все элементы слайдов (каждый отдельный слайд) 
+            // на основе класса .slider-item и сохраняет их в переменную slides
             const slides = document.querySelectorAll('.slider-item');
+            // этот блок кода проверяет, выходит ли индекс за границы доступных слайдов
+            // если index меньше 0 (меньше первого слайда), slideIndex устанавливается на последний слайд (зацикливание)
+            // если index больше или равен количеству слайдов, slideIndex устанавливается на первый слайд (также зацикливание)
             if (index < 0) {
                 slideIndex = slides.length - 1;
             } else if (index >= slides.length) {
                 slideIndex = 0;
             }
-
+            // Эта строка изменяет стиль transform элемента .slider, передвигая его горизонтально влево или вправо
+            // slideIndex * 300 определяет величину смещения слайдера по оси X. Здесь 300 - это ширина каждого слайда
             slider.style.transform = `translateX(-${slideIndex * 300}px)`;
+            // вызывается функция updateDots(), которая обновляет стили точек (подсвечивает активную точку для текущего слайда).
             updateDots();
         }
 
+        // обработчики событий на кнопках "Предыдущий" и "Следующий" вызывают функцию showSlide() для перемещения между слайдами.
+        // prevBtn.addEventListener('click', () => { ... }); - Этот блок кода добавляет обработчик события click для кнопки с id prevBtn (предыдущий). 
+        // когда на кнопку кликают, выполняется код внутри фигурных скобок.
         prevBtn.addEventListener('click', () => {
+            // slideIndex--; - Уменьшает значение переменной slideIndex на единицу при каждом клике на кнопку "Предыдущий". 
+            // Это используется для указания на предыдущий слайд.
             slideIndex--;
             showSlide(slideIndex);
         });
 
+        // showSlide(slideIndex) - Вызывает функцию showSlide() и передает ей текущее значение slideIndex. 
+        // Это позволяет функции showSlide() показать соответствующий слайд в соответствии с новым значением slideIndex.
         nextBtn.addEventListener('click', () => {
             slideIndex++;
             showSlide(slideIndex);
         });
 
+        // точки (dots) также имеют обработчики событий click, устанавливающие новый индекс слайда и вызывающие showSlide()
+        // dots.forEach((dot, i) => { ... }); - этот блок кода перебирает каждую точку (каждый элемент с классом .dot) 
+        // в коллекции dots с помощью метода forEach.
         dots.forEach((dot, i) => {
+            // dot.addEventListener('click', () => { ... }); - для каждой точки добавляется обработчик события click
+            // когда на точку кликают, выполняется код внутри этой функции
             dot.addEventListener('click', () => {
+                // slideIndex = i; - Устанавливает переменной slideIndex значение i, которое представляет индекс точки в коллекции
+                // Таким образом, при клике на определенную точку, переменная slideIndex устанавливается в соответствии с индексом этой точки
                 slideIndex = i; // Устанавливаем индекс слайда на основе клика на точке
+                // showSlide(slideIndex); - вызывает функцию showSlide() с переданным в нее значением slideIndex. 
+                // Это позволяет функции showSlide() отобразить соответствующий слайд, основываясь на индексе точки, на которую был сделан клик.
                 showSlide(slideIndex);
             });
-        });
+        }); // Таким образом, при клике на любую точку навигации вызывается showSlide() с индексом выбранной точки, что приводит к отображению соответствующего слайда в слайдере.
 
+        // функция updateDots() обновляет стили точек навигации (класс .active), чтобы подсветить текущую точку, 
+        // соответствующую текущему слайду в слайдере. Давайте разберем каждую часть функции
         function updateDots() {
+            // dots.forEach((dot, i) => { ... }); - этот блок кода перебирает каждую точку в коллекции dots (каждый элемент с классом .dot) 
+            // с помощью метода forEach.
             dots.forEach((dot, i) => {
+                // dot.classList.remove('active'); - удаляет класс active у всех точек
+                // это гарантирует, что ни одна точка не будет активной перед обновлением
                 dot.classList.remove('active');
+                // if (i === slideIndex) { dot.classList.add('active'); } - проверяет, соответствует ли индекс текущей точки i 
+                // текущему индексу слайда slideIndex. Если это так, то для этой точки добавляется класс active, 
+                // который обычно используется для выделения активной точки в навигации.
                 if (i === slideIndex) {
                     dot.classList.add('active');
                 }
             });
         }
 
-        // Для автоматической прокрутки слайдов, вы можете использовать setInterval:
+        // setInterval() запускает функцию через определенный интервал времени (в данном случае, каждые 2 секунды). 
+        // он увеличивает slideIndex и вызывает showSlide() для отображения следующего слайда.
         setInterval(() => {
+            // slideIndex++; - Каждый раз, когда выполняется этот интервал, индекс slideIndex увеличивается на единицу.
             slideIndex++;
+            // Затем вызывается функция showSlide() с текущим значением slideIndex. 
+            // Это показывает следующий слайд в слайдере каждые 2 секунды.
             showSlide(slideIndex);
         }, 2000); // Прокручивать каждые 2 секунды
 
+        // showSlide(slideIndex) вызывается в начале, чтобы показать первый слайд при загрузке страницы
         showSlide(slideIndex);
-
-
 
     </script>
 </body>
